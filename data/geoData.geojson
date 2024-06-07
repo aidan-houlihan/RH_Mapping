@@ -1,0 +1,397 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1992",
+        "address": "2nd St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.755607,
+          42.275139
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1993",
+        "address": "5th St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.952507,
+          42.275099
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1994",
+        "address": "X St.",
+        "Count": "9"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752127,
+          42.295039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1995",
+        "address": "Y St.",
+        "Count": "12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752207,
+          42.272039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1996",
+        "address": "Z St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752207,
+          42.271049
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1997",
+        "address": "A St.",
+        "Count": "20"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.757321,
+          42.271239
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1998",
+        "address": "B St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.751507,
+          42.271039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "1999",
+        "address": "C St.",
+        "Count": "6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.722507,
+          42.275439
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2000",
+        "address": "D St.",
+        "Count": "4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.652507,
+          42.245039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2001",
+        "address": "E St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.652500,
+          42.125239
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2002",
+        "address": "F St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752007,
+          42.270039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2003",
+        "address": "G St.",
+        "Count": "3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752502,
+          42.273239
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2004",
+        "address": "H St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.75107,
+          42.27579
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2005",
+        "address": "I St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.759102,
+          42.275939
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2006",
+        "address": "J St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752557,
+          42.275839
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2007",
+        "address": "K St.",
+        "Count": "22"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.755507,
+          42.272039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2008",
+        "address": "L St.",
+        "Count": "7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.759502,
+          42.215059
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2009",
+        "address": "M St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.852707,
+          42.215819
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2010",
+        "address": "N St.",
+        "Count": "3"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.7545507,
+          42.2752139
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2011",
+        "address": "O St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.75254,
+          42.12639
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2012",
+        "address": "P St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.75307,
+          42.28039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2013",
+        "address": "Q St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.76507,
+          42.272039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2014",
+        "address": "R St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.75227,
+          42.20239
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2015",
+        "address": "S St.",
+        "Count": "2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.85259,
+          42.17501
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2016",
+        "address": "T St.",
+        "Count": "12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752107,
+          42.275011
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2017",
+        "address": "U St.",
+        "Count": "1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752007,
+          42.270039
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2018",
+        "address": "V St.",
+        "Count": "25"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.752502,
+          42.175032
+      ]}
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Date": "2019",
+        "address": "W St.",
+        "Count": "16"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.85297,
+          42.074439
+      ]}
+    }
+  ]
+}
