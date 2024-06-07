@@ -1,16 +1,16 @@
 // Set the parameters
     // The Geojson data you have in your folder
-        const geoJsonURL = "data/geoData.geojson";
+        const geoJsonURL = "data/R&H Specimens.geojson";
 
     // Initial center of the map in terms of longitude and latitude
         const geoCenter = [38.05, -98.78];
 
     // Determine initial range of area shown on map (zoom closer when the number is higher)
-        const zoomLevel = 11;
+        const zoomLevel = 5;
 
     // Start and End year of the dataset
-        const baseStartYear = 1992;
-        const baseEndYear = 2019;
+        const baseStartYear = 1880;
+        const baseEndYear = 1950;
 
     //Markers & Clusters
         // The color of the markers, used in function customizeMarker()
@@ -66,7 +66,7 @@
                         $.getJSON(geoJsonURL, function(data){
                             let GEOJSON  = data;
                             for (let i = 0; i < GEOJSON["features"].length; i++){
-                                if (GEOJSON["features"][i]["properties"]["Date"] >= startYear && GEOJSON["features"][i]["properties"]["Date"] <= endYear) {  // will change "id" to "year"
+                                if (GEOJSON["features"][i]["properties"]["year"] >= startYear && GEOJSON["features"][i]["properties"]["year"] <= endYear) {  // will change "id" to "year"
                                     newGeoJson["features"].push(GEOJSON["features"][i])
                                 }
                             }
@@ -172,8 +172,11 @@
                                 {   // Information shown in tooltip
                                         onEachFeature: function(feature,layer){
                                             layer.bindPopup(
-                                                "<b>Address:  </b>" + feature.properties.address + "<br>" +
-                                                "<b>No. of Students:  </b>" + feature.properties.Count);
+                                                "<b>Catalog Number:  </b>" + feature.properties.catalogNumber + "<br>" +
+                                                "<b>Species:  </b>" + feature.properties.scientificName) + "<br>"+
+                                                "<b>Date:  </b>" + feature.properties.eventDate + "<br>" +
+                                                "<b>State:  </b>" + feature.properties.stateProvince + "<br>" +
+                                                "<b>Locality:  </b>" + feature.properties.locality + "<br>" ;
                                         },
                                     pointToLayer: function (feature, latlng) {
                                         return L.marker(latlng, {icon: customizedIcon});
