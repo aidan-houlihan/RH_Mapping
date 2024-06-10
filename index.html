@@ -30,8 +30,10 @@ http://localhost:8000/
 
     <!-- Time range slider -->
     <link rel="stylesheet" href="forSlider/jquery-ui.css">
+    <link rel="stylesheet" href="forSlider/classic.css" type = "text/css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="forSlider/jquery-ui.js"></script>
+    <script src="forSlider/jQAllRangeSliders-withRuler-min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="style.css" />
 
@@ -40,20 +42,18 @@ http://localhost:8000/
 
 <body>
 
+        <!-- Title -->
+        <h1>Rehn and Hebard Specimen Mapping PROTOTYPE </h1>
+        <h3>Expeditions from 1906 to 1932 - Drag the date slider to show collecting localities</h3>
+
+   <br></br>
     <!-- time range slider -->
     <div class="sliderDiv" >
         <p>
-            <label for="amount">Time range for Something:</label>
-            <input class="sliderValue" type="text" id="amount" >
+            <label for="amount">Date Range:</label>
         </p>
-        <div id="slider-range"></div>
+        <div id="slider"></div>
     </div>
-
-    <hr>
-
-    <!-- Title -->
-    <h1>A few random locations in Ann Arbor <a href="https://clarkdatalabs.github.io/time_filter_map/"><small>Tutorial</small></a></h1>
-    <h3>1992 - 2019</h3>
 
     <!-- MAP -->
     <div id="map"></div>
