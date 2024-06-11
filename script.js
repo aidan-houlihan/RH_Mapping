@@ -1,6 +1,13 @@
 // Set the parameters
     // The Geojson data you have in your folder
         const geoJsonURL = "data/R&H Specimens.geojson";
+        let GEOJSON_global;
+
+        $.getJSON('data/R&H Specimens.geojson', function(data) {
+            GEOJSON_global = data;
+        }).fail(function() {
+            console.error('There has been a problem with your getJSON operation');
+        });
 
     // Initial center of the map in terms of longitude and latitude
         const geoCenter = [38.05, -98.78];
@@ -22,84 +29,37 @@
 
     // Check line 170-174 to customize the information on tooltip for your data
 
-// // Slider
-//     $( function() {
-//         // config opaque slider
-//             $( "#slider-opaque" ).slider({
-//                 range: false,
-//                 min: 0,
-//                 max: 1,
-//                 step: 0.1,
-//                 value: 1,
-//                 slide: function( event, ui ) {
-//                     let opaque = ui.value;
-
-//                     $( "#opacity" ).val( opaque );
-//                     a2_1916_02.setOpacity(opaque);
-//                 }
-//             });
-
-//         // initial display
-//             $( "#opacity" ).val("1");
-
-
-//         // config time range slider
-//             $( "#slider-range" ).slider({
-//                 range: true,
-//                 min: new Date('1906.01.01').getTime() / 1000,
-//                 max: new Date('1933.01.01').getTime() / 1000,
-//                 values: [ new Date('1906.01.01').getTime() / 1000, new Date('1933.01.01').getTime() / 1000],
-
-//                 // Every time slider is slided, the map should be refreshed
-//                     slide: function( event, ui ) {
-//                         var newGeoJson = {
-//                             "type" : "Feature Collection",
-//                             "features": []
-//                         };
-//                         let startDate = new Date(ui.values[ 0 ] * 1000);
-//                         let endDate = new Date(ui.values[ 1 ] * 1000);
-
-//                         $( "#amount" ).val(startDate.toISOString().slice(0, 10) + " - " + endDate.toISOString().slice(0, 10));
-                        
-//                         $.getJSON(geoJsonURL, function(data){
-//                             let GEOJSON  = data;
-//                             for (let i = 0; i < GEOJSON["features"].length; i++){
-//                                 if ((new Date(GEOJSON["features"][i]["properties"]["eventDate"])) >= startDate &&
-//                                     (new Date(GEOJSON["features"][i]["properties"]["eventDate"])) <= endDate) {  // will change "id" to "year"
-                                   
-//                                     newGeoJson["features"].push(GEOJSON["features"][i])
-//                                 }
-//                             }
-//                             renderPinsFromJson(something_markers,newGeoJson);
-//                             //console.log(new Date(GEOJSON["features"][1]["properties"]["eventDate"]))
-//                         });
-//                     }
-//             });
-//         //initial display
-//             $( "#amount" ).val(
-//                 (new Date('1906.01.01').getTime() / 1000).toISOString().slice(0, 10) + " - " + new Date(ui.values[ 1 ] * 1000).toISOString().slice(0, 10)
-//             );
-//     });
-
-//Date Range Sldier
-var years = ["1906", "1907", "1908", "1909", "1910", "1911", "1912", "1913", "1914", "1915", "1916", "1917",
-            "1918", "1919", "1920", "1921", "1922", "1923", "1924", "1925", "1926", "1927", "1928", "1929",
-            "1930", "1931", "1932"]
 
 $("#slider").dateRangeSlider({
-    bounds:{
+    bounds: {
         min: new Date(1905, 1, 1),
-        max: new Date(1933,1,1)
+        max: new Date(1933, 1, 1)
     },
-    defaultValues:{
+    defaultValues: {
         min: new Date(1905, 1, 1),
-        max: new Date(1906,1,1)
+        max: new Date(1906, 1, 1)
     },
-    step:{
+    step: {
         days: 1
-    }
-}   
-);
+    },
+    scales: [
+        // Primary scale
+        {
+            first: function(value) { return value; },
+            end: function(value) { return value; },
+            next: function(value) {
+                var next = new Date(value);
+                return new Date(next.setYear(value.getFullYear() + 1));
+            },
+            label: function(value) {
+                return value.getFullYear();
+            },
+            format: function(tickContainer, tickStart, tickEnd) {
+                tickContainer.addClass("myCustomClass");
+            }
+        }
+    ]
+});
 
 $("#slider").on("valuesChanging", function(e, data){
     var newGeoJson = {
@@ -110,20 +70,170 @@ $("#slider").on("valuesChanging", function(e, data){
     let startDate = data.values.min;
     let endDate = data.values.max;
 
-    $.getJSON(geoJsonURL, function(data){
-        let GEOJSON  = data;
-        for (let i = 0; i < GEOJSON["features"].length; i++){
-            if ((new Date(GEOJSON["features"][i]["properties"]["eventDate"])) >= startDate &&
-                (new Date(GEOJSON["features"][i]["properties"]["eventDate"])) <= endDate) {  // will change "id" to "year"
-               
-                newGeoJson["features"].push(GEOJSON["features"][i])
+    // Filter the features based on the date range
+    let filteredFeatures = GEOJSON_global["features"].filter(feature => {
+        let eventDate = new Date(feature["properties"]["eventDate"]);
+        return eventDate >= startDate && eventDate <= endDate;
+    });
+
+    newGeoJson["features"] = filteredFeatures;
+
+    renderPinsFromJson(something_markers, newGeoJson);
+});
+
+d3.json("data/R&H Specimens.geojson").then(function(geoJson){
+
+    let granularity = "year";
+    // Count the features by date
+    let counts = countAllFeatures(geoJson, granularity);
+
+    console.log(counts)
+
+    // Prepare data for the chart
+    let labels = Object.keys(counts);
+    let data = Object.values(counts);
+    
+    // Create the chart
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '# of Features',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-        
-        renderPinsFromJson(something_markers,newGeoJson);
     });
+
+    $("#yearSelect").change(function() {
+        let chartStatus = Chart.getChart("myChart"); // <canvas> id
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+    }
+        var selectedYear = $(this).val();
     
-  });
+        // Determine the granularity of the bar chart
+        let granularity = selectedYear === "all" ? "year" : "month";
+        
+        if (selectedYear === "all") {
+            // If "All Years" is selected, reset the slider to the initial format
+            $("#slider").dateRangeSlider("bounds", new Date(1905, 1, 1), new Date(1933, 1, 1));
+            $("#slider").dateRangeSlider("values", new Date(1905, 1, 1), new Date(1933, 1, 1));
+            // Restore the year scales
+            $("#slider").dateRangeSlider("option", "scales", [
+                // Primary scale
+                {
+                    first: function(value) { return value; },
+                    end: function(value) { return value; },
+                    next: function(value) {
+                        var next = new Date(value);
+                        return new Date(next.setYear(value.getFullYear() + 1));
+                    },
+                    label: function(value) {
+                        return value.getFullYear();
+                    },
+                    format: function(tickContainer, tickStart, tickEnd) {
+                        tickContainer.addClass("myCustomClass");
+                    }
+                }
+            ]);
+            // Count the features by date
+            let counts = countAllFeatures(GEOJSON_global, granularity);
+
+            // Prepare data for the chart
+            let labels = Object.keys(counts);
+            let data = Object.values(counts);
+            
+            // Create the chart
+            let ctx = document.getElementById('myChart').getContext('2d');
+            let myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '# of Features',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+    
+        } else {
+            
+            // If a specific year is selected, update the slider bounds and values to cover only that year
+            $("#slider").dateRangeSlider("bounds", new Date(selectedYear, 0, 1), new Date(parseInt(selectedYear) + 1, 0, 1));
+            $("#slider").dateRangeSlider("values", new Date(selectedYear, 0, 1), new Date(parseInt(selectedYear) + 1, 0, 1));
+            // Update the scales of the slider to represent months
+            $("#slider").dateRangeSlider("option", "scales", [
+                // Primary scale
+                {
+                    first: function(value) { return value; },
+                    end: function(value) { return value; },
+                    next: function(value) {
+                        var next = new Date(value);
+                        return new Date(next.setMonth(value.getMonth() + 1));
+                    },
+                    label: function(value) {
+                        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        return months[value.getMonth()];
+                    },
+                    format: function(tickContainer, tickStart, tickEnd) {
+                        tickContainer.addClass("myCustomClass");
+                    }
+                }
+            ]);
+            // Count the features by date
+            let counts = countFeaturesByYear(GEOJSON_global, selectedYear);
+            // Prepare data for the chart
+                let labels = Object.keys(counts);
+                let data = Object.values(counts);
+
+                // Create the chart
+                let ctx = document.getElementById('myChart').getContext('2d');
+                let myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '# of Features',
+                            data: data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+        }
+    });
+});
 
 // RENDER THE MAP
     //Using map from OpenStreetMap
@@ -144,8 +254,56 @@ $("#slider").on("valuesChanging", function(e, data){
     // Get the initial Markers
         //renderPinsFromURL(something_markers, geoJsonURL);
 
-
+    //Create the initial chart
+        
 // Functions to be used above
+
+function countAllFeatures(geoJson, granularity) {
+    let counts = {};
+
+    geoJson.features.forEach(feature => {
+        let date = new Date(feature.properties.eventDate);
+        let key;
+
+        if (granularity === 'year') {
+            key = date.getFullYear();
+        } else if (granularity === 'month') {
+            key = date.getFullYear() + '-' + (date.getMonth() + 1);
+        }
+
+        if (!counts[key]) {
+            counts[key] = 0;
+        }
+
+        counts[key]++;
+    });
+    console.log(counts)
+    return counts;
+}
+
+function countFeaturesByYear(geoJson, selectedYear) {
+    let counts = {};
+    let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    // Initialize counts for each month of the selected year
+    for (let i = 0; i < 12; i++) {
+        let key = monthNames[i];
+        counts[key] = 0;
+    }
+
+    geoJson.features.forEach(feature => {
+        let date = new Date(feature.properties.eventDate);
+        let year = date.getFullYear();
+        let month = monthNames[date.getMonth()]; // JavaScript months are 0-indexed
+
+        if(selectedYear == year){
+            counts[month]++;
+        }
+    });
+
+    return counts;
+}
+
     // Implement the customized Icon
         function customizeMarker(){
             const markerNarrativeHtmlStyles = `
@@ -168,7 +326,6 @@ $("#slider").on("valuesChanging", function(e, data){
                                     })
             return icon;
         };
-
 
 
     // Set the cluster of markers
