@@ -33,11 +33,11 @@
 $("#slider").dateRangeSlider({
     bounds: {
         min: new Date(1905, 1, 1),
-        max: new Date(1933, 1, 1)
+        max: new Date(1931, 11, 30)
     },
     defaultValues: {
         min: new Date(1905, 1, 1),
-        max: new Date(1906, 1, 1)
+        max: new Date(1931, 11, 30)
     },
     step: {
         days: 1
@@ -96,7 +96,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
     // Create the chart
     let ctx = document.getElementById('myChart').getContext('2d');
     let myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
@@ -108,9 +108,18 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
             }]
         },
         options: {
+            elements:{
+                    line:{
+                        tension: .2
+                    }
+            },
+            fill: true,
             scales: {
                 y: {
                     beginAtZero: true
+                },
+                x: {
+                    beginAtZero: false
                 }
             }
         }
@@ -123,13 +132,13 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
     }
         var selectedYear = $(this).val();
     
-        // Determine the granularity of the bar chart
+        // Determine the granularity of the line chart
         let granularity = selectedYear === "all" ? "year" : "month";
         
         if (selectedYear === "all") {
             // If "All Years" is selected, reset the slider to the initial format
-            $("#slider").dateRangeSlider("bounds", new Date(1905, 1, 1), new Date(1933, 1, 1));
-            $("#slider").dateRangeSlider("values", new Date(1905, 1, 1), new Date(1933, 1, 1));
+            $("#slider").dateRangeSlider("bounds", new Date(1905, 1, 1), new Date(1931, 11, 30));
+            $("#slider").dateRangeSlider("values", new Date(1905, 1, 1), new Date(1931, 11, 30));
             // Restore the year scales
             $("#slider").dateRangeSlider("option", "scales", [
                 // Primary scale
@@ -158,7 +167,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
             // Create the chart
             let ctx = document.getElementById('myChart').getContext('2d');
             let myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
@@ -170,9 +179,18 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                     }]
                 },
                 options: {
+                    elements:{
+                            line:{
+                                tension: .2
+                            }
+                    },
+                    fill: true,
                     scales: {
                         y: {
                             beginAtZero: true
+                        },
+                        x: {
+                            beginAtZero: false
                         }
                     }
                 }
@@ -211,7 +229,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                 // Create the chart
                 let ctx = document.getElementById('myChart').getContext('2d');
                 let myChart = new Chart(ctx, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
                         labels: labels,
                         datasets: [{
@@ -223,9 +241,18 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                         }]
                     },
                     options: {
+                        elements:{
+                                line:{
+                                    tension: .2
+                                }
+                        },
+                        fill: true,
                         scales: {
                             y: {
                                 beginAtZero: true
+                            },
+                            x: {
+                                beginAtZero: false
                             }
                         }
                     }
@@ -259,8 +286,28 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
 // Functions to be used above
 
 function countAllFeatures(geoJson, granularity) {
-    let counts = {};
+    // Find min and max years
+    let minYear = Infinity;
+    let maxYear = -Infinity;
+    geoJson.features.forEach(feature => {
+        let year = new Date(feature.properties.eventDate).getFullYear();
+        minYear = Math.min(minYear, year);
+        maxYear = Math.max(maxYear, year);
+    });
 
+    // Initialize counts object with all years from min to max with 0 features
+    let counts = {};
+    for (let year = minYear; year <= maxYear; year++) {
+        if (granularity === 'year') {
+            counts[year] = 0;
+        } else if (granularity === 'month') {
+            for (let month = 1; month <= 12; month++) {
+                counts[`${year}-${month}`] = 0;
+            }
+        }
+    }
+
+    // Count features
     geoJson.features.forEach(feature => {
         let date = new Date(feature.properties.eventDate);
         let key;
@@ -271,15 +318,13 @@ function countAllFeatures(geoJson, granularity) {
             key = date.getFullYear() + '-' + (date.getMonth() + 1);
         }
 
-        if (!counts[key]) {
-            counts[key] = 0;
-        }
-
         counts[key]++;
     });
-    console.log(counts)
+
+    console.log(counts);
     return counts;
 }
+
 
 function countFeaturesByYear(geoJson, selectedYear) {
     let counts = {};
@@ -339,7 +384,7 @@ function countFeaturesByYear(geoJson, selectedYear) {
                                     iconCreateFunction: function(cluster){
                                         return L.divIcon({
                                             className:`marker-cluster ${clusterColorClass}`,
-                                            iconSize: new L.Point(12,12),
+                                            iconSize: new L.Point(8,8),
                                             //html: '<div><span>' + cluster.getChildCount() + '</span></div>'
                                         });
                                     }

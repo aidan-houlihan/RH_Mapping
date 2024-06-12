@@ -15,7 +15,6 @@
         font-family: "Arial", "Verdana"
     }
 
-
     .marker-cluster-color {
         background-color: rgba(255, 0, 0, 0.9);
     }
@@ -24,24 +23,20 @@
         background-color: rgba(255, 0, 0, 0.9);
     }
 
-    .sliderDiv{
-        /* display:inline-block; */
-        width: 90%;
-        height: 8%;
-        margin-bottom: 5px;
-        padding-left: 3%;
-        /* margin-top: 25px; */
-    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+  
+  .sliderDiv, .chartDiv {
+      width: 90%; /* Adjust this value based on actual width of your canvas/chart */
+  }
 
-    .sliderDiv p{
-        display:inline-block;
-    }
+  .sliderDiv{
+    padding-left: 40px;
+  }
 
-    #slider{
-        display:inline-block;
-        width: 90%;
-        top:.3em;
-    }
 
     input.sliderValue{
         border:0;
