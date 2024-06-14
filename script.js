@@ -1,4 +1,19 @@
 // Set the parameters
+
+    // Initial center of the map in terms of longitude and latitude
+        const geoCenter = [38.05, -98.78];
+
+    // Determine initial range of area shown on map (zoom closer when the number is higher)
+        const zoomLevel = 4;
+
+    //Markers & Clusters
+    // The color of the markers, used in function customizeMarker()
+        const markColor = '#ff0000';
+    // Determine the threshold of distance that cluster multiple markers, used in Function initialMarkerClusters()
+        const maxClusterRadius = 1;
+    // Specify the color of the marker cluster in css under the class name, used in Function initialMarkerClusters()
+        const clusterColorClass = 'marker-cluster-color';
+
     // The Geojson data you have in your folder
         const geoJsonURL = "data/R&H Specimens.geojson";
         let GEOJSON_global;
@@ -6,14 +21,28 @@
         $.getJSON('data/R&H Specimens.geojson', function(data) {
             GEOJSON_global = data;
 
+            // Find min and max years
+            let minYear = Infinity;
+            let maxYear = -Infinity;
+            GEOJSON_global.features.forEach(feature => {
+                let year = new Date(feature.properties.eventDate).getFullYear();
+                minYear = Math.min(minYear, year);
+                maxYear = Math.max(maxYear, year);
+            });
+
+            // //Set baseStartDate and baseEndDate
+            // let baseStartDate = minYear;
+            // let baseEndDate = maxYear;
+
+
             $("#slider").dateRangeSlider({
                 bounds: {
-                    min: new Date(1905, 1, 1),
-                    max: new Date(1931, 11, 30)
+                    min: new Date(minYear, 1, 1),
+                    max: new Date(maxYear, 11, 30)
                 },
                 defaultValues: {
-                    min: new Date(1905, 1, 1),
-                    max: new Date(1931, 11, 30)
+                    min: new Date(minYear, 1, 1),
+                    max: new Date(maxYear, 11, 30)
                 },
                 step: {
                     days: 1
@@ -38,55 +67,39 @@
             });
 
 
-                $("#slider").on("valuesChanging", function(e, data){
-                    var newGeoJson = {
-                        "type" : "Feature Collection",
-                        "features": []
-                    };
-                
-                    let startDate = data.values.min;
-                    let endDate = data.values.max;
-                
-                    // Filter the features based on the date range
-                    let filteredFeatures = GEOJSON_global["features"].filter(feature => {
-                        let eventDate = new Date(feature["properties"]["eventDate"]);
-                        return eventDate >= startDate && eventDate <= endDate;
-                    });
-                
-                    newGeoJson["features"] = filteredFeatures;
-                
-                    renderPinsFromJson(something_markers, newGeoJson);
+            $("#slider").on("valuesChanging", function(e, data){
+                var newGeoJson = {
+                    "type" : "Feature Collection",
+                    "features": []
+                };
+            
+                let startDate = data.values.min;
+                let endDate = data.values.max;
+            
+                // Filter the features based on the date range
+                let filteredFeatures = GEOJSON_global["features"].filter(feature => {
+                    let eventDate = new Date(feature["properties"]["eventDate"]);
+                    return eventDate >= startDate && eventDate <= endDate;
                 });
+            
+                newGeoJson["features"] = filteredFeatures;
+            
+                renderPinsFromJson(something_markers, newGeoJson);
+            });
 
-                // Manually trigger the valuesChanging event with the default values
-                $("#slider").trigger("valuesChanging", {
-                    values: {
-                        min: new Date(1905, 1, 1),
-                        max: new Date(1931, 11, 30)
-                    }
-                });
+            // Manually trigger the valuesChanging event with the default values
+            $("#slider").trigger("valuesChanging", {
+                values: {
+                    min: new Date(minYear, 1, 1),
+                    max: new Date(maxYear, 11, 30)
+                }
+            });
 
         }).fail(function() {
             console.error('There has been a problem with your getJSON operation');
         });
 
-    // Initial center of the map in terms of longitude and latitude
-        const geoCenter = [38.05, -98.78];
 
-    // Determine initial range of area shown on map (zoom closer when the number is higher)
-        const zoomLevel = 4;
-
-    // Start and End year of the dataset
-        const baseStartDate = 1905;
-        const baseEndDate = 1932;
-
-    //Markers & Clusters
-        // The color of the markers, used in function customizeMarker()
-            const markColor = '#ff0000';
-        // Determine the threshold of distance that cluster multiple markers, used in Function initialMarkerClusters()
-            const maxClusterRadius = 1;
-        // Specify the color of the marker cluster in css under the class name, used in Function initialMarkerClusters()
-            const clusterColorClass = 'marker-cluster-color';
 
     // Check line 170-174 to customize the information on tooltip for your data
 
@@ -95,8 +108,6 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
     let granularity = "year";
     // Count the features by date
     let counts = countAllFeatures(geoJson, granularity);
-
-    console.log(counts)
 
     // Prepare data for the chart
     let labels = Object.keys(counts);
@@ -146,8 +157,8 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
         
         if (selectedYear === "all") {
             // If "All Years" is selected, reset the slider to the initial format
-            $("#slider").dateRangeSlider("bounds", new Date(1905, 1, 1), new Date(1931, 11, 30));
-            $("#slider").dateRangeSlider("values", new Date(1905, 1, 1), new Date(1931, 11, 30));
+            $("#slider").dateRangeSlider("bounds", new Date(minYear, 1, 1), new Date(maxYear, 11, 30));
+            $("#slider").dateRangeSlider("values", new Date(minYear, 1, 1), new Date(maxYear, 11, 30));
             // Restore the year scales
             $("#slider").dateRangeSlider("option", "scales", [
                 // Primary scale
@@ -169,8 +180,8 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
 
             $("#slider").trigger("valuesChanging", {
                 values: {
-                    min: new Date(1905, 1, 1),
-                    max: new Date(1931, 11, 30)
+                    min: new Date(minYear, 1, 1),
+                    max: new Date(maxYear, 11, 30)
                 }
             });
             // Count the features by date
@@ -347,7 +358,6 @@ function countAllFeatures(geoJson, granularity) {
         counts[key]++;
     });
 
-    console.log(counts);
     return counts;
 }
 
@@ -435,13 +445,25 @@ function countFeaturesByYear(geoJson, selectedYear) {
                                 geoJson,
                                 {   // Information shown in tooltip
                                         onEachFeature: function(feature,layer){
-                                            layer.bindPopup(
-                                                "<b>Catalog Number:  </b>" + feature.properties.catalogNumber + "<br>" +
-                                                "<b>Species:  </b>" + feature.properties.scientificName + "<br>"+
-                                                "<b>Date:  </b>" + feature.properties.eventDate + "<br>" +
-                                                "<b>State:  </b>" + feature.properties.stateProvince + "<br>" +
-                                                "<b>Locality:  </b>" + feature.properties.locality + "<br>"+
-                                                '<b><a href=" '+ feature.properties.link + ' "target="_blank">View Record</a>');
+                                            if(feature.properties.bhl != ""){
+                                                layer.bindPopup(
+                                                    "<b>Catalog Number:  </b>" + feature.properties.catalogNumber + "<br>" +
+                                                    "<b>Species:  </b>" + feature.properties.scientificName + "<br>"+
+                                                    "<b>Date:  </b>" + feature.properties.eventDate + "<br>" +
+                                                    "<b>State:  </b>" + feature.properties.stateProvince + "<br>" +
+                                                    "<b>Locality:  </b>" + feature.properties.locality + "<br>"+
+                                                    '<b><a href=" '+ feature.properties.link + ' "target="_blank">View Record</a>'+ "<br>"+
+                                                    '<b><a href=" '+ feature.properties.bhl + ' "target="_blank">View Field Notes</a>' + "<br>");
+                                            }
+                                            else{
+                                                layer.bindPopup(
+                                                    "<b>Catalog Number:  </b>" + feature.properties.catalogNumber + "<br>" +
+                                                    "<b>Species:  </b>" + feature.properties.scientificName + "<br>"+
+                                                    "<b>Date:  </b>" + feature.properties.eventDate + "<br>" +
+                                                    "<b>State:  </b>" + feature.properties.stateProvince + "<br>" +
+                                                    "<b>Locality:  </b>" + feature.properties.locality + "<br>"+
+                                                    '<b><a href=" '+ feature.properties.link + ' "target="_blank">View Record</a>');
+                                            }
                                         },
                                     pointToLayer: function (feature, latlng) {
                                         return L.marker(latlng, {icon: customizedIcon});
