@@ -105,6 +105,17 @@
 
 d3.json("data/R&H Specimens.geojson").then(function(geoJson){
 
+    GEOJSON_global = geoJson;
+
+    // Find min and max years
+    let minYear = Infinity;
+    let maxYear = -Infinity;
+    GEOJSON_global.features.forEach(feature => {
+        let year = new Date(feature.properties.eventDate).getFullYear();
+        minYear = Math.min(minYear, year);
+        maxYear = Math.max(maxYear, year);
+    });
+
     let granularity = "year";
     // Count the features by date
     let counts = countAllFeatures(geoJson, granularity);
