@@ -5,6 +5,67 @@
 
         $.getJSON('data/R&H Specimens.geojson', function(data) {
             GEOJSON_global = data;
+
+            $("#slider").dateRangeSlider({
+                bounds: {
+                    min: new Date(1905, 1, 1),
+                    max: new Date(1931, 11, 30)
+                },
+                defaultValues: {
+                    min: new Date(1905, 1, 1),
+                    max: new Date(1931, 11, 30)
+                },
+                step: {
+                    days: 1
+                },
+                scales: [
+                    // Primary scale
+                    {
+                        first: function(value) { return value; },
+                        end: function(value) { return value; },
+                        next: function(value) {
+                            var next = new Date(value);
+                            return new Date(next.setYear(value.getFullYear() + 1));
+                        },
+                        label: function(value) {
+                            return value.getFullYear();
+                        },
+                        format: function(tickContainer, tickStart, tickEnd) {
+                            tickContainer.addClass("myCustomClass");
+                        }
+                    }
+                ]
+            });
+
+
+                $("#slider").on("valuesChanging", function(e, data){
+                    var newGeoJson = {
+                        "type" : "Feature Collection",
+                        "features": []
+                    };
+                
+                    let startDate = data.values.min;
+                    let endDate = data.values.max;
+                
+                    // Filter the features based on the date range
+                    let filteredFeatures = GEOJSON_global["features"].filter(feature => {
+                        let eventDate = new Date(feature["properties"]["eventDate"]);
+                        return eventDate >= startDate && eventDate <= endDate;
+                    });
+                
+                    newGeoJson["features"] = filteredFeatures;
+                
+                    renderPinsFromJson(something_markers, newGeoJson);
+                });
+
+                // Manually trigger the valuesChanging event with the default values
+                $("#slider").trigger("valuesChanging", {
+                    values: {
+                        min: new Date(1905, 1, 1),
+                        max: new Date(1931, 11, 30)
+                    }
+                });
+
         }).fail(function() {
             console.error('There has been a problem with your getJSON operation');
         });
@@ -29,58 +90,6 @@
 
     // Check line 170-174 to customize the information on tooltip for your data
 
-
-$("#slider").dateRangeSlider({
-    bounds: {
-        min: new Date(1905, 1, 1),
-        max: new Date(1931, 11, 30)
-    },
-    defaultValues: {
-        min: new Date(1905, 1, 1),
-        max: new Date(1931, 11, 30)
-    },
-    step: {
-        days: 1
-    },
-    scales: [
-        // Primary scale
-        {
-            first: function(value) { return value; },
-            end: function(value) { return value; },
-            next: function(value) {
-                var next = new Date(value);
-                return new Date(next.setYear(value.getFullYear() + 1));
-            },
-            label: function(value) {
-                return value.getFullYear();
-            },
-            format: function(tickContainer, tickStart, tickEnd) {
-                tickContainer.addClass("myCustomClass");
-            }
-        }
-    ]
-});
-
-$("#slider").on("valuesChanging", function(e, data){
-    var newGeoJson = {
-        "type" : "Feature Collection",
-        "features": []
-    };
-
-    let startDate = data.values.min;
-    let endDate = data.values.max;
-
-    // Filter the features based on the date range
-    let filteredFeatures = GEOJSON_global["features"].filter(feature => {
-        let eventDate = new Date(feature["properties"]["eventDate"]);
-        return eventDate >= startDate && eventDate <= endDate;
-    });
-
-    newGeoJson["features"] = filteredFeatures;
-
-    renderPinsFromJson(something_markers, newGeoJson);
-});
-
 d3.json("data/R&H Specimens.geojson").then(function(geoJson){
 
     let granularity = "year";
@@ -100,7 +109,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
         data: {
             labels: labels,
             datasets: [{
-                label: '# of Features',
+                label: '# of Specimens',
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -157,6 +166,13 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                     }
                 }
             ]);
+
+            $("#slider").trigger("valuesChanging", {
+                values: {
+                    min: new Date(1905, 1, 1),
+                    max: new Date(1931, 11, 30)
+                }
+            });
             // Count the features by date
             let counts = countAllFeatures(GEOJSON_global, granularity);
 
@@ -171,7 +187,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '# of Features',
+                        label: '# of Specimens',
                         data: data,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -220,6 +236,15 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                     }
                 }
             ]);
+
+            $("#slider").trigger("valuesChanging", {
+                values: {
+                    min: new Date(selectedYear, 0, 1),
+                    max: new Date(parseInt(selectedYear) + 1, 0, 1)
+                }
+            });
+
+
             // Count the features by date
             let counts = countFeaturesByYear(GEOJSON_global, selectedYear);
             // Prepare data for the chart
@@ -233,7 +258,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: '# of Features',
+                            label: '# of Specimens',
                             data: data,
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
@@ -261,6 +286,7 @@ d3.json("data/R&H Specimens.geojson").then(function(geoJson){
         }
     });
 });
+
 
 // RENDER THE MAP
     //Using map from OpenStreetMap
